@@ -1,0 +1,38 @@
+[
+    {
+        "topic": "javascript",
+        "title": "Sum of Two Numbers",
+        "description": "Write a function that returns the sum of two numbers.",
+        "difficulty": 1,
+        "tags": [
+            "math",
+            "basics"
+        ],
+        "starterCode": "function sum(a, b) {\n  // your code here\n}",
+        "solution": "function sum(a, b) {\n  return a + b;\n}",
+        "testCases": [
+            {
+                "input": "2, 3",
+                "expectedOutput": "5",
+                "pass": true
+            },
+            {
+                "input": "10, 20",
+                "expectedOutput": "30",
+                "pass": true
+            }
+        ]
+    },
+    {
+        "topic": "python",
+        "title": "Print Hello World",
+        "description": "Write a program that prints 'Hello World'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "print('Hello World')",
+        "solution": "print('Hello World')",
+        "testCases": []
+    }
+]

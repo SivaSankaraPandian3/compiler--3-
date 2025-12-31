@@ -1,0 +1,20 @@
+[
+    {
+        "topic": "javascript",
+        "level": "beginner",
+        "questions": [
+            {
+                "id": 101,
+                "question": "What is the output of typeof null?",
+                "options": [
+                    "object",
+                    "null",
+                    "undefined",
+                    "number"
+                ],
+                "correctAnswer": 0,
+                "explanation": "In JavaScript, typeof null returns 'object', which is a known bug."
+            }
+        ]
+    }
+]

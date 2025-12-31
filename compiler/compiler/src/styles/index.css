@@ -1,0 +1,164 @@
+:root {
+  /* Minimalist Light Theme */
+  --bg-app: #f4f4f5;
+  /* Very light grey */
+  --bg-card: #ffffff;
+  --bg-header: #ffffff;
+  --bg-editor: #1e1e1e;
+  /* Keep editor dark for contrast, or user preference */
+
+  --text-primary: #18181b;
+  /* Almost black */
+  --text-secondary: #71717a;
+  /* Grey */
+  --text-inverse: #ffffff;
+
+  --accent: #000000;
+  --border: #e4e4e7;
+
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-card-hover: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: auto;
+  /* Ensure scrolling is possible */
+}
+
+/* Prism editor override - VITAL FOR PIXEL-PERFECT ALIGNMENT */
+.code-editor,
+.code-editor textarea,
+.code-editor pre {
+  margin: 0 !important;
+  border: 0 !important;
+  background: #1e1e1e !important;
+  font-family: 'Fira Code', 'Cascadia Code', 'Source Code Pro', monospace !important;
+  font-size: 15px !important;
+  line-height: inherit !important;
+  /* Inherit from the style prop (1.5) */
+  tab-size: 4 !important;
+  white-space: pre !important;
+  word-spacing: 0 !important;
+  letter-spacing: 0 !important;
+  text-rendering: optimizeSpeed !important;
+  -webkit-font-smoothing: antialiased !important;
+  font-variant-ligatures: none !important;
+  font-kerning: none !important;
+}
+
+.code-editor textarea {
+  outline: none !important;
+  padding: 12px !important;
+  box-sizing: content-box !important;
+  color: inherit !important;
+  resize: none !important;
+  caret-color: #fff !important;
+}
+
+.code-editor pre {
+  padding: 12px !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+  box-sizing: content-box !important;
+  color: inherit !important;
+  /* CRITICAL: Ensure text visibility */
+}
+
+/* Vibrant High-Contrast Token Theme */
+.token {
+  background: none !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+  letter-spacing: inherit !important;
+}
+
+.token.tag,
+.token.selector,
+.token.constant,
+.token.boolean {
+  color: #ff79c6 !important;
+  /* Drac-Pink */
+}
+
+.token.keyword,
+.token.atrule {
+  color: #50fa7b !important;
+  /* Drac-Green */
+}
+
+.token.string,
+.token.char,
+.token.attr-value {
+  color: #f1fa8c !important;
+  /* Drac-Yellow */
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6272a4 !important;
+  /* Drac-Blueish Comment */
+  font-style: italic !important;
+}
+
+.token.function,
+.token.class-name {
+  color: #8be9fd !important;
+  /* Drac-Cyan */
+}
+
+.token.property,
+.token.attr-name {
+  color: #ffb86c !important;
+  /* Drac-Orange */
+}
+
+.token.number {
+  color: #bd93f9 !important;
+  /* Drac-Purple */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.punctuation {
+  color: #f8f8f2 !important;
+  /* Off-white */
+}
+
+/* Scrollbar styling - FORCEFULLY HIDDEN */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+}
+
+::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* Target everything for Firefox/IE */
+html,
+body,
+#root,
+* {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}

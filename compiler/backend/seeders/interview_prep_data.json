@@ -1,0 +1,1002 @@
+[
+    {
+        "topic": "javascript",
+        "title": "Hello JavaScript",
+        "description": "Log 'Hello JavaScript' to the console.",
+        "difficulty": 1,
+        "tags": [
+            "basics",
+            "console"
+        ],
+        "starterCode": "// your code here",
+        "solution": "console.log('Hello JavaScript');",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Sum of Two",
+        "description": "Find the sum of 5 and 10 and log it.",
+        "difficulty": 1,
+        "tags": [
+            "basics",
+            "math"
+        ],
+        "starterCode": "// your code here",
+        "solution": "console.log(5 + 10);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Array Length",
+        "description": "Log the length of array [1, 2, 3, 4, 5].",
+        "difficulty": 1,
+        "tags": [
+            "arrays"
+        ],
+        "starterCode": "const arr = [1, 2, 3, 4, 5];\n// your code here",
+        "solution": "const arr = [1, 2, 3, 4, 5];\nconsole.log(arr.length);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "String Upper",
+        "description": "Convert 'hello' to uppercase and log it.",
+        "difficulty": 1,
+        "tags": [
+            "strings"
+        ],
+        "starterCode": "const str = 'hello';\n// your code here",
+        "solution": "const str = 'hello';\nconsole.log(str.toUpperCase());",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Even Check",
+        "description": "Log whether 10 is even using modulo.",
+        "difficulty": 1,
+        "tags": [
+            "math",
+            "logic"
+        ],
+        "starterCode": "// your code here",
+        "solution": "console.log(10 % 2 === 0);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Simple Object",
+        "description": "Create an object 'user' with name 'John' and log user.name.",
+        "difficulty": 1,
+        "tags": [
+            "objects"
+        ],
+        "starterCode": "// your code here",
+        "solution": "const user = { name: 'John' };\nconsole.log(user.name);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Template Literal",
+        "description": "Log a greeting 'Hi John' using template literals with variable name = 'John'.",
+        "difficulty": 1,
+        "tags": [
+            "strings"
+        ],
+        "starterCode": "const name = 'John';\n// your code here",
+        "solution": "const name = 'John';\nconsole.log(`Hi ${name}`);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Type Check",
+        "description": "Log the type of 123.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "// your code here",
+        "solution": "console.log(typeof 123);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Array Push",
+        "description": "Add 3 to [1, 2] and log the array.",
+        "difficulty": 1,
+        "tags": [
+            "arrays"
+        ],
+        "starterCode": "const arr = [1, 2];\n// your code here",
+        "solution": "const arr = [1, 2];\narr.push(3);\nconsole.log(arr);",
+        "testCases": []
+    },
+    {
+        "topic": "javascript",
+        "title": "Math Max",
+        "description": "Log the maximum of 10 and 20 using Math.max.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "// your code here",
+        "solution": "console.log(Math.max(10, 20));",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Python Hello",
+        "description": "Print 'Hello Python'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "# your code here",
+        "solution": "print('Hello Python')",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Sum of Numbers",
+        "description": "Print the sum of 7 and 8.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "# your code here",
+        "solution": "print(7 + 8)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "List Length",
+        "description": "Print the length of list [10, 20, 30].",
+        "difficulty": 1,
+        "tags": [
+            "lists"
+        ],
+        "starterCode": "my_list = [10, 20, 30]\n# your code here",
+        "solution": "my_list = [10, 20, 30]\nprint(len(my_list))",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "String Repeat",
+        "description": "Print 'Hi' 3 times using multiplication operator.",
+        "difficulty": 1,
+        "tags": [
+            "strings"
+        ],
+        "starterCode": "# your code here",
+        "solution": "print('Hi' * 3)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Square Calculation",
+        "description": "Print the square of 5.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "# your code here",
+        "solution": "print(5 ** 2)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "List Append",
+        "description": "Append 4 to list [1, 2, 3] and print it.",
+        "difficulty": 1,
+        "tags": [
+            "lists"
+        ],
+        "starterCode": "l = [1, 2, 3]\n# your code here",
+        "solution": "l = [1, 2, 3]\nl.append(4)\nprint(l)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Range Iteration",
+        "description": "Print numbers from 0 to 2 using a for loop and range.",
+        "difficulty": 1,
+        "tags": [
+            "loops"
+        ],
+        "starterCode": "# your code here",
+        "solution": "for i in range(3):\n    print(i)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Dictionary Check",
+        "description": "Print the value of key 'a' from {'a': 1, 'b': 2}.",
+        "difficulty": 1,
+        "tags": [
+            "dictionaries"
+        ],
+        "starterCode": "d = {'a': 1, 'b': 2}\n# your code here",
+        "solution": "d = {'a': 1, 'b': 2}\nprint(d['a'])",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "Boolean Logic",
+        "description": "Print whether 10 is greater than 5 and less than 15.",
+        "difficulty": 1,
+        "tags": [
+            "logic"
+        ],
+        "starterCode": "# your code here",
+        "solution": "print(10 > 5 and 10 < 15)",
+        "testCases": []
+    },
+    {
+        "topic": "python",
+        "title": "String Split",
+        "description": "Split string 'A,B,C' by comma and print the list.",
+        "difficulty": 1,
+        "tags": [
+            "strings"
+        ],
+        "starterCode": "s = 'A,B,C'\n# your code here",
+        "solution": "s = 'A,B,C'\nprint(s.split(','))",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Main Heading",
+        "description": "Create an h1 tag with 'Interview Prep'.",
+        "difficulty": 1,
+        "tags": [
+            "basics",
+            "tags"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <h1>Interview Prep</h1>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Paragraph and Bold",
+        "description": "Create a p tag with some bold text using b tag.",
+        "difficulty": 1,
+        "tags": [
+            "formatting"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <p>This is <b>bold</b> text.</p>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "External Link",
+        "description": "Create a link (a tag) to 'https://google.com' with text 'Google'.",
+        "difficulty": 1,
+        "tags": [
+            "links"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <a href=\"https://google.com\">Google</a>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Unordered List",
+        "description": "Create an unordered list with items 'HTML', 'CSS', 'JS'.",
+        "difficulty": 1,
+        "tags": [
+            "lists"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <ul>\n    <li>HTML</li>\n    <li>CSS</li>\n    <li>JS</li>\n  </ul>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Ordered List",
+        "description": "Create an ordered list with 2 items.",
+        "difficulty": 1,
+        "tags": [
+            "lists"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <ol>\n    <li>First</li>\n    <li>Second</li>\n  </ol>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Image Element",
+        "description": "Add an img tag with src 'logo.png' and alt 'Logo'.",
+        "difficulty": 1,
+        "tags": [
+            "images"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <img src=\"logo.png\" alt=\"Logo\" />\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Basic Table",
+        "description": "Create a table with one row and two cells (td).",
+        "difficulty": 1,
+        "tags": [
+            "tables"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <table>\n    <tr>\n      <td>Cell 1</td>\n      <td>Cell 2</td>\n    </tr>\n  </table>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Input Field",
+        "description": "Create a text input and a button labeled 'Submit'.",
+        "difficulty": 1,
+        "tags": [
+            "forms"
+        ],
+        "starterCode": "<div>\n  <!-- code here -->\n</div>",
+        "solution": "<div>\n  <input type=\"text\" />\n  <button>Submit</button>\n</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Div Container",
+        "description": "Create a div with a class 'container' and some text inside.",
+        "difficulty": 1,
+        "tags": [
+            "layout"
+        ],
+        "starterCode": "<!-- code here -->",
+        "solution": "<div class=\"container\">Content here</div>",
+        "testCases": []
+    },
+    {
+        "topic": "html",
+        "title": "Semantic Footer",
+        "description": "Create a footer tag with a paragraph 'Copyright 2025'.",
+        "difficulty": 1,
+        "tags": [
+            "semantics"
+        ],
+        "starterCode": "<!-- code here -->",
+        "solution": "<footer>\n  <p>Copyright 2025</p>\n</footer>",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Java Hello",
+        "description": "Print 'Hello Java'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello Java\");\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Int Addition",
+        "description": "Create two integers a=10, b=20 and print their sum.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        int a = 10, b = 20;\n        System.out.println(a + b);\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "String Greeting",
+        "description": "Create a String 'name' with 'Antigravity' and print 'Hello ' + name.",
+        "difficulty": 1,
+        "tags": [
+            "strings"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        String name = \"Antigravity\";\n        System.out.println(\"Hello \" + name);\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Array Sum Simulated",
+        "description": "Create an array {1, 2, 3} and print a message 'Array exists'.",
+        "difficulty": 1,
+        "tags": [
+            "arrays"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        int[] arr = {1, 2, 3};\n        System.out.println(\"Array exists\");\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Multiplication",
+        "description": "Print result of 5 * 6.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(5 * 6);\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Condition Check",
+        "description": "Print 'True' if 10 > 5.",
+        "difficulty": 1,
+        "tags": [
+            "logic"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        if (10 > 5) {\n            System.out.println(\"True\");\n        }\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Loop Print",
+        "description": "Print 'Loop' once. (Simulated)",
+        "difficulty": 1,
+        "tags": [
+            "loops"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Loop\");\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Variable Update",
+        "description": "Create int x=5, add 2 to it, and print x.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        x += 2;\n        System.out.println(x);\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Char Variable",
+        "description": "Print the character 'A'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println('A');\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "java",
+        "title": "Double Value",
+        "description": "Print 3.14.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "public class Main {\n    public static void main(String[] args) {\n        // code here\n    }\n}",
+        "solution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(3.14);\n    }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "CPP Hello",
+        "description": "Print 'Hello C++'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Hello C++\" << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Sum Two",
+        "description": "Create int a=5, b=5 and print a+b.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 5, b = 5;\n    cout << a + b << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "If Statement",
+        "description": "Print 'Yes' if 10 is equal to 10.",
+        "difficulty": 1,
+        "tags": [
+            "logic"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    if (10 == 10) {\n        cout << \"Yes\" << endl;\n    }\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Multiplication",
+        "description": "Print 10 * 10.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << 10 * 10 << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Subtraction",
+        "description": "Print 20 - 5.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << 20 - 5 << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "String Output",
+        "description": "Print 'Interview'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Interview\" << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Division",
+        "description": "Print 100 / 2.",
+        "difficulty": 1,
+        "tags": [
+            "math"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << 100 / 2 << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Variable Init",
+        "description": "Create int x = 123 and print it.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int x = 123;\n    cout << x << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Char Output",
+        "description": "Print 'B'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"B\" << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "c++",
+        "title": "Endl usage",
+        "description": "Print 'Line1' then 'Line2' using endl.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    // code here\n    return 0;\n}",
+        "solution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Line1\" << endl;\n    cout << \"Line2\" << endl;\n    return 0;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Interpolation",
+        "description": "Display a title variable in the template using interpolation.",
+        "difficulty": 1,
+        "tags": [
+            "interpolation"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<h1>{{ /* title variable */ }}</h1>`\n})\nexport class AppComponent {\n  title = 'Angular Prep';\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<h1>{{ title }}</h1>`\n})\nexport class AppComponent {\n  title = 'Angular Prep';\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Click Binding",
+        "description": "Bind a button click to a showMessage() method.",
+        "difficulty": 1,
+        "tags": [
+            "events"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<button /* bind click */>Click</button>`\n})\nexport class AppComponent {\n  showMessage() { console.log('Hi'); }\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<button (click)=\"showMessage()\">Click</button>`\n})\nexport class AppComponent {\n  showMessage() { console.log('Hi'); }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "ngIf Directive",
+        "description": "Use *ngIf to show a paragraph only if isVisible is true.",
+        "difficulty": 1,
+        "tags": [
+            "directives"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `\n    <p /* add ngIf */>Visible</p>\n  `\n})\nexport class AppComponent {\n  isVisible = true;\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `\n    <p *ngIf=\"isVisible\">Visible</p>\n  `\n})\nexport class AppComponent {\n  isVisible = true;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "ngFor Directive",
+        "description": "Use *ngFor to list items from an 'items' array.",
+        "difficulty": 1,
+        "tags": [
+            "directives"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `\n    <ul>\n      <li /* add ngFor */>{{ item }}</li>\n    </ul>\n  `\n})\nexport class AppComponent {\n  items = ['A', 'B', 'C'];\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `\n    <ul>\n      <li *ngFor=\"let item of items\">{{ item }}</li>\n    </ul>\n  `\n})\nexport class AppComponent {\n  items = ['A', 'B', 'C'];\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Property Binding",
+        "description": "Bind the [src] property of an img to an imageUrl variable.",
+        "difficulty": 1,
+        "tags": [
+            "binding"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<img [src]=\"/* variable */\" />`\n})\nexport class AppComponent {\n  imageUrl = 'logo.png';\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<img [src]=\"imageUrl\" />`\n})\nexport class AppComponent {\n  imageUrl = 'logo.png';\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Input Binding",
+        "description": "Show how to use @Input in a child component (simulated).",
+        "difficulty": 1,
+        "tags": [
+            "input"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<p>{{ data }}</p>`\n})\nexport class AppComponent {\n  @Input() data: string = '';\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<p>{{ data }}</p>`\n})\nexport class AppComponent {\n  @Input() data: string = '';\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Style Binding",
+        "description": "Bind color style using [style.color].",
+        "difficulty": 1,
+        "tags": [
+            "styling"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<p [style.color]=\"'red'\">Red Text</p>`\n})\nexport class AppComponent {}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<p [style.color]=\"'red'\">Red Text</p>`\n})\nexport class AppComponent {}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Class Binding",
+        "description": "Bind a class using [class.active].",
+        "difficulty": 1,
+        "tags": [
+            "styling"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<div [class.active]=\"true\">Active</div>`\n})\nexport class AppComponent {}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<div [class.active]=\"true\">Active</div>`\n})\nexport class AppComponent {}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "Constructor Init",
+        "description": "Initialize a name variable in the constructor.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root', template: '{{name}}'\n})\nexport class AppComponent {\n  name: string;\n  constructor() {\n    // init name\n  }\n}",
+        "solution": "@Component({\n  selector: 'app-root', template: '{{name}}'\n})\nexport class AppComponent {\n  name: string;\n  constructor() {\n    this.name = 'Test';\n  }\n}",
+        "testCases": []
+    },
+    {
+        "topic": "angular",
+        "title": "NgModel Mock",
+        "description": "Show syntax for two-way binding [(ngModel)].",
+        "difficulty": 1,
+        "tags": [
+            "binding"
+        ],
+        "starterCode": "@Component({\n  selector: 'app-root',\n  template: `<input [(ngModel)]=\"name\" />`\n})\nexport class AppComponent {\n  name = '';\n}",
+        "solution": "@Component({\n  selector: 'app-root',\n  template: `<input [(ngModel)]=\"name\" />`\n})\nexport class AppComponent {\n  name = '';\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Text Color",
+        "description": "Make the text color red for the class 'text-red'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": ".text-red {\n  /* code here */\n}",
+        "solution": ".text-red {\n  color: red;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Center Text",
+        "description": "Align text to center for class 'header'.",
+        "difficulty": 1,
+        "tags": [
+            "layout"
+        ],
+        "starterCode": ".header {\n  /* code here */\n}",
+        "solution": ".header {\n  text-align: center;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Background Color",
+        "description": "Set background color to blue for class 'box'.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": ".box {\n  /* code here */\n}",
+        "solution": ".box {\n  background-color: blue;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Font Size",
+        "description": "Set font size to 24px.",
+        "difficulty": 1,
+        "tags": [
+            "typography"
+        ],
+        "starterCode": "h1 {\n  /* code here */\n}",
+        "solution": "h1 {\n  font-size: 24px;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Border",
+        "description": "Set a 1px solid black border.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "div {\n  /* code here */\n}",
+        "solution": "div {\n  border: 1px solid black;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Margin",
+        "description": "Add 20px margin to all sides.",
+        "difficulty": 1,
+        "tags": [
+            "layout"
+        ],
+        "starterCode": "section {\n  /* code here */\n}",
+        "solution": "section {\n  margin: 20px;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Padding",
+        "description": "Add 10px padding.",
+        "difficulty": 1,
+        "tags": [
+            "layout"
+        ],
+        "starterCode": "p {\n  /* code here */\n}",
+        "solution": "p {\n  padding: 10px;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Flexbox Row",
+        "description": "Set display to flex and flex-direction to row.",
+        "difficulty": 1,
+        "tags": [
+            "flexbox"
+        ],
+        "starterCode": ".container {\n  /* code here */\n}",
+        "solution": ".container {\n  display: flex;\n  flex-direction: row;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Font Weight",
+        "description": "Set font weight to bold.",
+        "difficulty": 1,
+        "tags": [
+            "typography"
+        ],
+        "starterCode": "span {\n  /* code here */\n}",
+        "solution": "span {\n  font-weight: bold;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "css",
+        "title": "Width and Height",
+        "description": "Set width and height to 100px.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": ".square {\n  /* code here */\n}",
+        "solution": ".square {\n  width: 100px;\n  height: 100px;\n}",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Select All Customers",
+        "description": "Select all columns from the Customers table.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT * FROM Customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Select First Names",
+        "description": "Select only the first_name column from Customers.",
+        "difficulty": 1,
+        "tags": [
+            "basics"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT first_name FROM Customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Filter by Country",
+        "description": "Select all customers from the USA.",
+        "difficulty": 1,
+        "tags": [
+            "where"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT * FROM Customers WHERE country = 'USA'",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Order by Age",
+        "description": "Select all customers and order them by age.",
+        "difficulty": 1,
+        "tags": [
+            "order-by"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT * FROM Customers ORDER BY age",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Count Customers",
+        "description": "Find the total number of customers.",
+        "difficulty": 1,
+        "tags": [
+            "count"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT count(*) FROM Customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Find Older Customers",
+        "description": "Select names of customers older than 25.",
+        "difficulty": 1,
+        "tags": [
+            "where"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT first_name FROM Customers WHERE age > 25",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Find Specific Item",
+        "description": "Select all orders where item is 'Keyboard'.",
+        "difficulty": 1,
+        "tags": [
+            "where"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT * FROM Orders WHERE item = 'Keyboard'",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "High Amount Orders",
+        "description": "Select orders with amount greater than 1000.",
+        "difficulty": 1,
+        "tags": [
+            "where"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT * FROM Orders WHERE amount > 1000",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Distinct Countries",
+        "description": "List all unique countries from Customers table.",
+        "difficulty": 1,
+        "tags": [
+            "distinct"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT DISTINCT country FROM Customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "UK Customers",
+        "description": "Select first_name of customers from UK.",
+        "difficulty": 1,
+        "tags": [
+            "where"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT first_name FROM Customers WHERE country = 'UK'",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Substring Example",
+        "description": "Select the first 3 characters of customer_name from the customers table.",
+        "difficulty": 1,
+        "tags": [
+            "string-functions"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT SUBSTRING(customer_name, 1, 3) FROM customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Get Current Time",
+        "description": "Select the current time using current_time() from the customers table.",
+        "difficulty": 1,
+        "tags": [
+            "date-functions"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT current_time() FROM customers",
+        "testCases": []
+    },
+    {
+        "topic": "sql",
+        "title": "Get Data Status",
+        "description": "Use the getdata() function to show the reading status from the customers table.",
+        "difficulty": 1,
+        "tags": [
+            "system-functions"
+        ],
+        "starterCode": "-- write query here",
+        "solution": "SELECT getdata() FROM customers",
+        "testCases": []
+    }
+]
