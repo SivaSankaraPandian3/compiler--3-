@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { problemsApi, progressApi } from '../../services/api';
 import './ProblemsList.css';
@@ -126,10 +127,10 @@ const ProblemsList = () => {
                 tags: '',
                 starterCode: ''
             });
-            alert('Question added successfully!');
+            toast.success('Question added successfully!');
         } catch (err) {
             console.error('Error adding problem:', err);
-            alert('Failed to add question');
+            toast.error('Failed to add question');
         }
     };
 
@@ -141,7 +142,7 @@ const ProblemsList = () => {
                 await fetchData();
             } catch (err) {
                 console.error('Error deleting problem:', err);
-                alert('Failed to delete problem');
+                toast.error('Failed to delete problem');
             }
         }
     };

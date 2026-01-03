@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Navbar from "./components/Navbar/Navbar.jsx";
 import HtmlCompiler from "./components/HtmlCompiler/HtmlCompiler.jsx";
 import ReactCompiler from "./components/HtmlCompiler/ReactCompiler.jsx";
@@ -12,12 +13,10 @@ import ProblemsList from "./components/Problems/ProblemsList.jsx";
 import ProblemDetail from "./components/Problems/ProblemDetail.jsx";
 import "./styles/App.css";
 
-
-
-
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="app-container">
         <Navbar />
         <div className="content-area">
@@ -32,7 +31,7 @@ function App() {
               <Route path="/react" element={<ReactCompiler />} />
               <Route path="/angular" element={<AngularCompiler />} />
               <Route path="/quiz" element={<QuizTopics />} />
-              <Route path="/quiz/:topic" element={<QuizTopics />} /> {/* Redirect or show levels? For now re-use topics or make separate */}
+              <Route path="/quiz/:topic" element={<QuizTopics />} />
               <Route path="/quiz/:topic/:level" element={<Quiz />} />
               <Route path="/problems" element={<ProblemsTopics />} />
               <Route path="/problems/:topic" element={<ProblemsList />} />
@@ -44,6 +43,7 @@ function App() {
     </Router>
   );
 }
+
 
 
 export default App;

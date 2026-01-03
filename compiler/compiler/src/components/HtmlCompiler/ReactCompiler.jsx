@@ -91,6 +91,16 @@ root.render(<App />);
           <body>
             ${html}
 
+            <script>
+              window.alert = function(message) {
+                window.parent.postMessage({
+                  type: "iframe-alert",
+                  message: message
+                }, "*");
+              };
+            </script>
+
+
             <style>
               ${css}
             </style>

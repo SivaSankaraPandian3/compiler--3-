@@ -102,376 +102,108 @@ export const sqlDatabase = {
     }
 };
 
-export const executeSQL = (query) => {
+import initSqlJs from 'sql.js';
+
+let sqlEngine = null;
+
+const getSqlEngine = async () => {
+    if (sqlEngine) return sqlEngine;
     try {
-        const normalizedQuery = query.replace(/\s+/g, ' ').replace(/;/g, '').trim();
+        const SQL = await initSqlJs({
+            locateFile: file => `/sql-wasm.wasm`
+        });
+        sqlEngine = new SQL.Database();
+
+        // Add common function aliases for better dialect compatibility
+        try {
+            sqlEngine.create_function("substring", (str, start, len) => {
+                if (str === null || str === undefined) return null;
+                const s = String(str);
+                const startIdx = Math.max(0, (Number(start) || 1) - 1);
+                if (len === undefined) return s.substring(startIdx);
+                return s.substring(startIdx, startIdx + Number(len));
+            });
+            sqlEngine.create_function("len", (str) => (str !== null && str !== undefined) ? String(str).length : null);
+            sqlEngine.create_function("getdate", () => new Date().toISOString().replace('T', ' ').split('.')[0]);
+            sqlEngine.create_function("now", () => new Date().toISOString().replace('T', ' ').split('.')[0]);
+            sqlEngine.create_function("curdate", () => new Date().toISOString().split('T')[0]);
+            sqlEngine.create_function("iif", (cond, t, f) => cond ? t : f);
+            sqlEngine.create_function("isnull", (val, fallback) => (val === null || val === undefined) ? fallback : val);
+        } catch (fErr) {
+            console.warn("Could not create SQL function aliases:", fErr);
+        }
+
+        // Seed the database with our mock data
+        for (const [tableName, tableInfo] of Object.entries(sqlDatabase)) {
+            const columnsDef = tableInfo.columns.map(col => `"${col}"`).join(', ');
+            // SQLite doesn't strictly need types, but we'll use TEXT for simplicity as it's coming from JSON
+            sqlEngine.run(`CREATE TABLE IF NOT EXISTS "${tableName}" (${columnsDef})`);
+
+            for (const row of tableInfo.data) {
+                const keys = Object.keys(row);
+                const cols = keys.map(k => `"${k}"`).join(', ');
+                const vals = keys.map(k => {
+                    const v = row[k];
+                    if (v === null || v === undefined) return 'NULL';
+                    if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
+                    return v;
+                }).join(', ');
+                sqlEngine.run(`INSERT INTO "${tableName}" (${cols}) VALUES (${vals})`);
+            }
+        }
+        return sqlEngine;
+    } catch (err) {
+        console.error("Failed to initialize SQL engine:", err);
+        return null;
+    }
+};
+
+export const executeSQL = async (query) => {
+    try {
+        const engine = await getSqlEngine();
+        if (!engine) throw new Error("SQL Engine not initialized");
+
+        // Handle a few common non-SELECT mock responses if needed, 
+        // but sqlEngine.run handles them for real now.
+        const normalizedQuery = query.trim();
         const lowerQuery = normalizedQuery.toLowerCase();
 
-        // Basic check for operation
-        if (!lowerQuery.startsWith('select')) {
-            if (lowerQuery.startsWith('insert')) return { message: "WriteResult({ \"nInserted\" : 1 })" };
-            if (lowerQuery.startsWith('update')) return { message: "Query OK, 1 row affected" };
-            if (lowerQuery.startsWith('delete')) return { message: "Query OK, 1 row deleted" };
-            return { error: "Unsupported SQL operation. Try SELECT, INSERT, UPDATE, DELETE." };
-        }
-
-        // --- Extraction ---
-        const selectPartRaw = (normalizedQuery.match(/select\s+(.*?)\s+from/i) || [])[1];
-        const fromPart = (normalizedQuery.match(/from\s+([^\s\(\)]+)/i) || [])[1];
-        if (!fromPart) return { error: "No table specified in FROM clause" };
-
-        let selectPart = selectPartRaw;
-        let topLimit = null;
-
-        // Support SELECT TOP N ... or SELECT ... TOP N
-        const topMatch = selectPart.match(/top\s+(\d+)/i);
-        if (topMatch) {
-            topLimit = parseInt(topMatch[1]);
-            selectPart = selectPart.replace(/top\s+\d+/i, '').trim();
-        }
-
-        const joinMatch = normalizedQuery.match(/join\s+([^\s]+)\s+(?:as\s+)?(\w+)?\s*on\s+(.*?)(?=\s+where|\s+group|\s+order|\s+limit|$)/i);
-        const whereMatch = normalizedQuery.match(/where\s+(.*?)(?=\s+group|\s+order|\s+limit|$)/i);
-        const groupMatch = normalizedQuery.match(/group\s+by\s+(.*?)(?=\s+order|\s+limit|$)/i);
-        const orderMatch = normalizedQuery.match(/order\s+by\s+(.*?)(?=\s+limit|$)/i);
-        const limitMatch = normalizedQuery.match(/limit\s+(\d+)/i);
-
-        let tableKey = Object.keys(sqlDatabase).find(k => k.toLowerCase() === fromPart.toLowerCase());
-        let table = sqlDatabase[tableKey];
-        if (!table) return { error: `Table '${fromPart}' does not exist` };
-
-        let workingData = [...table.data];
-
-        // --- Join Logic ---
-        if (joinMatch) {
-            const joinTableName = joinMatch[1];
-            const joinCondition = joinMatch[3];
-            const joinTableKey = Object.keys(sqlDatabase).find(k => k.toLowerCase() === joinTableName.toLowerCase());
-            const joinTable = sqlDatabase[joinTableKey];
-
-            if (joinTable) {
-                const combined = [];
-                const cond = joinCondition.split('=');
-                const leftColRaw = cond[0].trim();
-                const rightColRaw = cond[1].trim();
-                const leftCol = leftColRaw.includes('.') ? leftColRaw.split('.').pop() : leftColRaw;
-                const rightCol = rightColRaw.includes('.') ? rightColRaw.split('.').pop() : rightColRaw;
-
-                workingData.forEach(row1 => {
-                    joinTable.data.forEach(row2 => {
-                        const r1Val = row1[Object.keys(row1).find(k => k.toLowerCase() === leftCol.toLowerCase())];
-                        const r2Val = row2[Object.keys(row2).find(k => k.toLowerCase() === rightCol.toLowerCase())];
-                        if (String(r1Val) === String(r2Val)) {
-                            combined.push({ ...row1, ...row2 });
-                        }
-                    });
-                });
-                workingData = combined;
+        // Execute query (exec returns an array of results for each statement)
+        const res = engine.exec(normalizedQuery);
+        if (res.length === 0) {
+            // Check if it was a non-SELECT statement that affected rows
+            if (!lowerQuery.startsWith('select')) {
+                if (lowerQuery.startsWith('insert')) return { message: "Query OK, 1 row inserted" };
+                if (lowerQuery.startsWith('update')) return { message: "Query OK, rows affected" };
+                if (lowerQuery.startsWith('delete')) return { message: "Query OK, rows deleted" };
+                return { message: "Command executed successfully" };
             }
+            return { columns: [], data: [] };
         }
 
-        // --- Filtering Logic (WHERE) ---
-        if (whereMatch) {
-            const whereClause = whereMatch[1];
-            const conditions = whereClause.split(/\s+AND\s+(?![^']*'[^']*'(?:\s+AND|$))/i);
-
-            conditions.forEach(c => {
-                const match = c.match(/(.*?)\s*(=|>|<|>=|<=|!=|like|between|in)\s*(.*)/i);
-                if (match) {
-                    let col = match[1].trim().split('.').pop();
-                    const op = match[2].toLowerCase();
-                    const valRaw = match[3].trim();
-
-                    workingData = workingData.filter(row => {
-                        const rowColKey = Object.keys(row).find(k => k.toLowerCase() === col.toLowerCase());
-                        const rVal = row[rowColKey];
-
-                        if (op === '=') return String(rVal).toLowerCase() == valRaw.replace(/['"]/g, '').toLowerCase();
-                        if (op === '!=') return String(rVal).toLowerCase() != valRaw.replace(/['"]/g, '').toLowerCase();
-                        if (op === '>') return Number(rVal) > Number(valRaw);
-                        if (op === '<') return Number(rVal) < Number(valRaw);
-                        if (op === '>=') return Number(rVal) >= Number(valRaw);
-                        if (op === '<=') return Number(rVal) <= Number(valRaw);
-                        if (op === 'like') return new RegExp('^' + valRaw.replace(/['"]/g, '').replace(/%/g, '.*') + '$', 'i').test(String(rVal));
-                        if (op === 'in') {
-                            const list = valRaw.replace(/[\(\)]/g, '').split(',').map(v => v.trim().replace(/['"]/g, ''));
-                            return list.includes(String(rVal));
-                        }
-                        if (op === 'between') {
-                            const parts = valRaw.split(/\s+and\s+/i);
-                            const v1 = Number(parts[0]);
-                            const v2 = Number(parts[1]);
-                            return Number(rVal) >= v1 && Number(rVal) <= v2;
-                        }
-                        return true;
-                    });
-                }
+        // If multiple statements, return the last result set (typical for scripts ending in SELECT)
+        const lastResult = res[res.length - 1];
+        const columns = lastResult.columns;
+        const data = lastResult.values.map(values => {
+            const obj = {};
+            columns.forEach((col, i) => {
+                obj[col] = values[i];
             });
-        }
+            return obj;
+        });
 
-        const isDistinct = selectPart.toLowerCase().startsWith('distinct');
-        const selectFieldsRaw = isDistinct ? selectPart.substring(8).trim() : selectPart;
+        return { columns, data };
 
-        // Split by comma but ignore commas inside parentheses
-        const selectFields = [];
-        let currentField = '';
-        let parenLevel = 0;
-        for (let i = 0; i < selectFieldsRaw.length; i++) {
-            const char = selectFieldsRaw[i];
-            if (char === '(') parenLevel++;
-            else if (char === ')') parenLevel--;
-
-            if (char === ',' && parenLevel === 0) {
-                selectFields.push(currentField.trim());
-                currentField = '';
-            } else {
-                currentField += char;
-            }
-        }
-        if (currentField.trim()) selectFields.push(currentField.trim());
-
-        const hasAgg = selectFields.some(f => /(count|sum|avg|min|max)\(/i.test(f));
-
-        // Window functions check
-        const hasWindow = selectFields.some(f => /(row_number|rank|dense_rank|ntile|lag|lead|first_value|last_value)\(/i.test(f));
-
-        if (hasAgg || groupMatch) {
-            const gColRaw = groupMatch ? groupMatch[1].trim() : null;
-            const gCol = gColRaw ? gColRaw.split('.').pop() : null;
-            const groups = {};
-
-            workingData.forEach(row => {
-                const key = gCol ? row[Object.keys(row).find(k => k.toLowerCase() === gCol.toLowerCase())] : 'all';
-                if (!groups[key]) groups[key] = [];
-                groups[key].push(row);
-            });
-
-            workingData = Object.keys(groups).map(key => {
-                const res = {};
-                selectFields.forEach(f => {
-                    const agg = f.match(/(count|sum|avg|min|max)\((.*?)\)(?:\s+as\s+(\w+))?/i);
-                    if (agg) {
-                        const func = agg[1].toLowerCase();
-                        const colRaw = agg[2].trim();
-                        const col = colRaw.split('.').pop();
-                        const alias = agg[3] || `${func}_${col.replace('*', 'all')}`;
-                        const groupRows = groups[key];
-
-                        if (func === 'count') res[alias] = col === '*' ? groupRows.length : groupRows.filter(r => r[col] != null).length;
-                        else {
-                            const rowColKeyFirst = Object.keys(groupRows[0]).find(k => k.toLowerCase() === col.toLowerCase());
-                            const vals = groupRows.map(r => Number(r[rowColKeyFirst])).filter(v => !isNaN(v));
-                            if (func === 'sum') res[alias] = vals.reduce((a, b) => a + b, 0);
-                            if (func === 'avg') res[alias] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-                            if (func === 'min') res[alias] = Math.min(...vals);
-                            if (func === 'max') res[alias] = Math.max(...vals);
-                        }
-                    } else {
-                        const parts = f.split(/\s+as\s+/i);
-                        const colRaw = parts[0].trim();
-                        const col = colRaw.split('.').pop();
-                        const alias = parts[1] || col;
-                        const rowColKey = Object.keys(groups[key][0]).find(k => k.toLowerCase() === col.toLowerCase());
-                        res[alias] = rowColKey ? row[rowColKey] : null;
-                    }
-                });
-                return res;
-            });
-        } else {
-            // Row-level projection logic
-            workingData = workingData.map((row, index) => {
-                const res = {};
-                if (selectFields[0] === '*') return row;
-
-                selectFields.forEach(f => {
-                    const parts = f.split(/\s+as\s+/i);
-                    const exprPart = parts[0].trim();
-                    let alias = parts[1] ? parts[1].trim().replace(/['"]/g, '') : null;
-
-                    if (!alias) {
-                        // If no alias, try to generate a clean one
-                        if (exprPart.includes('(')) {
-                            // For functions like SUBSTRING(name, 1, 3), use the function name or a simpler identifier
-                            alias = exprPart.split('(')[0].trim().toLowerCase();
-                        } else {
-                            alias = exprPart.split('.').pop().trim().replace(/['"]/g, '');
-                        }
-                    }
-
-                    // Handle CASE WHEN
-                    if (exprPart.toLowerCase().startsWith('case')) {
-                        const whenMatch = exprPart.match(/when\s+(.*?)\s+then\s+(.*?)\s+else\s+(.*?)\s+end/i);
-                        if (whenMatch) {
-                            const condition = whenMatch[1];
-                            const thenVal = whenMatch[2].replace(/['"]/g, '');
-                            const elseVal = whenMatch[3].replace(/['"]/g, '');
-                            // Very naive condition checker
-                            const condMatch = condition.match(/(\w+)\s*([<>=!]+)\s*(.*)/);
-                            if (condMatch) {
-                                const cCol = condMatch[1];
-                                const cOp = condMatch[2];
-                                const cVal = condMatch[3].replace(/['"]/g, '');
-                                const rVal = row[Object.keys(row).find(k => k.toLowerCase() === cCol.toLowerCase())];
-                                let pass = false;
-                                if (cOp === '=') pass = String(rVal) == cVal;
-                                else if (cOp === '>') pass = Number(rVal) > Number(cVal);
-                                else if (cOp === '<') pass = Number(rVal) < Number(cVal);
-                                res[alias] = pass ? thenVal : elseVal;
-                            } else {
-                                res[alias] = elseVal;
-                            }
-                            return;
-                        }
-                    }
-
-                    const funcMatch = exprPart.match(/(\w+)\((.*?)\)/i);
-                    if (funcMatch) {
-                        const fName = funcMatch[1].toLowerCase();
-                        const fArgsRaw = funcMatch[2] ? funcMatch[2].split(',').map(arg => arg.trim()) : [];
-
-                        const getArgValue = (arg) => {
-                            if (!arg) return null;
-                            if (arg.startsWith("'") && arg.endsWith("'")) return arg.slice(1, -1);
-                            if (arg.startsWith('"') && arg.endsWith('"')) return arg.slice(1, -1);
-                            if (!isNaN(arg) && arg !== '') return Number(arg);
-                            const colName = arg.split('.').pop();
-                            const rowColKey = Object.keys(row).find(k => k.toLowerCase() === colName.toLowerCase());
-                            return rowColKey ? row[rowColKey] : null;
-                        };
-
-                        const args = fArgsRaw.map(getArgValue);
-
-                        // String Functions
-                        if (fName === 'upper') res[alias] = String(args[0] || '').toUpperCase();
-                        else if (fName === 'lower') res[alias] = String(args[0] || '').toLowerCase();
-                        else if (fName === 'length') res[alias] = String(args[0] || '').length;
-                        else if (fName === 'trim') res[alias] = String(args[0] || '').trim();
-                        else if (fName === 'concat') res[alias] = args.join('');
-                        else if (fName === 'substring') {
-                            const s = String(args[0] || '');
-                            const start = (args[1] || 1) - 1;
-                            const len = args[2];
-                            res[alias] = len ? s.substr(start, len) : s.substr(start);
-                        }
-
-                        // Numeric Functions
-                        else if (fName === 'round') res[alias] = Math.round(Number(args[0] || 0));
-                        else if (fName === 'ceiling' || fName === 'ceil') res[alias] = Math.ceil(Number(args[0] || 0));
-                        else if (fName === 'floor') res[alias] = Math.floor(Number(args[0] || 0));
-                        else if (fName === 'abs') res[alias] = Math.abs(Number(args[0] || 0));
-                        else if (fName === 'power') res[alias] = Math.pow(Number(args[0] || 0), Number(args[1] || 0));
-
-                        // Date Functions
-                        else if (fName === 'now' || fName === 'getdate' || fName === 'getdata') {
-                            // Use a slightly rounded time to ensure user code and solution code match if executed close together
-                            const now = new Date();
-                            now.setMilliseconds(0);
-                            res[alias] = now.toISOString();
-                        }
-                        else if (fName === 'current_date') res[alias] = new Date().toISOString().split('T')[0];
-                        else if (fName === 'current_time' || fName === 'currenttime') {
-                            const now = new Date();
-                            now.setMilliseconds(0);
-                            res[alias] = now.toTimeString().split(' ')[0];
-                        }
-                        else if (fName === 'date_add') {
-                            const d = new Date(args[0]);
-                            d.setDate(d.getDate() + (Number(args[1]) || 0));
-                            res[alias] = d.toISOString().split('T')[0];
-                        }
-                        else if (fName === 'datediff') {
-                            const d1 = new Date(args[0]);
-                            const d2 = new Date(args[1]);
-                            res[alias] = Math.floor((d1 - d2) / (1000 * 60 * 60 * 24));
-                        }
-
-                        // Window Functions (Simulated)
-                        else if (fName === 'row_number') res[alias] = index + 1;
-                        else if (fName === 'rank' || fName === 'dense_rank') res[alias] = index + 1;
-                        else if (fName === 'ntile') res[alias] = Math.ceil((index + 1) / (workingData.length / (args[0] || 1)));
-                        else if (fName === 'lag') {
-                            const offset = Number(args[1] || 1);
-                            const prev = workingData[index - offset];
-                            const cName = (fArgsRaw[0] || '').split('.').pop();
-                            res[alias] = prev ? prev[Object.keys(prev).find(k => k.toLowerCase() === cName.toLowerCase())] : null;
-                        }
-                        else if (fName === 'lead') {
-                            const offset = Number(args[1] || 1);
-                            const next = workingData[index + offset];
-                            const cName = (fArgsRaw[0] || '').split('.').pop();
-                            res[alias] = next ? next[Object.keys(next).find(k => k.toLowerCase() === cName.toLowerCase())] : null;
-                        }
-                        else if (fName === 'first_value') {
-                            const first = workingData[0];
-                            const cName = (fArgsRaw[0] || '').split('.').pop();
-                            res[alias] = first ? first[Object.keys(first).find(k => k.toLowerCase() === cName.toLowerCase())] : null;
-                        }
-                        else if (fName === 'last_value') {
-                            const last = workingData[workingData.length - 1];
-                            const cName = (fArgsRaw[0] || '').split('.').pop();
-                            res[alias] = last ? last[Object.keys(last).find(k => k.toLowerCase() === cName.toLowerCase())] : null;
-                        }
-
-                        // Conversion & Null Handling
-                        else if (fName === 'coalesce') res[alias] = args.find(a => a !== null && a !== undefined);
-                        else if (fName === 'nullif') res[alias] = args[0] === args[1] ? null : args[0];
-                        else if (fName === 'cast' || fName === 'convert') res[alias] = args[0];
-
-                        // System Info
-                        else if (fName === 'database') res[alias] = 'LocalDB';
-                        else if (fName === 'user' || fName === 'session_user' || fName === 'current_user' || fName === 'version') res[alias] = 'Admin_v1.0';
-
-                        // Control Flow
-                        else if (fName === 'if' || fName === 'iif') res[alias] = args[0] ? args[1] : args[2];
-
-                        else res[alias] = args[0];
-                    } else {
-                        const col = exprPart.split('.').pop();
-                        const rowColKey = Object.keys(row).find(k => k.toLowerCase() === col.toLowerCase());
-                        res[alias] = rowColKey ? row[rowColKey] : null;
-                    }
-                });
-                return res;
-            });
-
-            if (isDistinct) {
-                const seen = new Set();
-                workingData = workingData.filter(r => {
-                    const s = JSON.stringify(r);
-                    if (seen.has(s)) return false;
-                    seen.add(s);
-                    return true;
-                });
-            }
-        }
-
-
-        if (orderMatch) {
-            const parts = orderMatch[1].trim().split(/\s+/);
-            const col = parts[0].split('.').pop();
-            const dir = (parts[1] || 'asc').toLowerCase();
-            workingData.sort((a, b) => {
-                const rowColKeyA = Object.keys(a).find(k => k.toLowerCase() === col.toLowerCase());
-                const rowColKeyB = Object.keys(b).find(k => k.toLowerCase() === col.toLowerCase());
-                const vA = a[rowColKeyA];
-                const vB = b[rowColKeyB];
-                return dir === 'asc' ? (vA < vB ? -1 : 1) : (vA < vB ? 1 : -1);
-            });
-        }
-
-        const finalLimit = topLimit || (limitMatch ? parseInt(limitMatch[1]) : null);
-        if (finalLimit !== null) workingData = workingData.slice(0, finalLimit);
-
-        return { columns: workingData.length ? Object.keys(workingData[0]) : [], data: workingData };
 
     } catch (error) {
-        console.error("SQL Execution Error:", error);
-        return { error: "Query Syntax Error: " + error.message };
+        console.error("Real SQL Error:", error);
+        return { error: error.message };
     }
 };
 
 
 export const executeJava = (sourceCode) => {
+
     let outputBuffer = "";
     const variables = {};
 
@@ -664,7 +396,7 @@ export const executeCode = async (language, code, context = {}) => {
     const lang = (language || '').toLowerCase();
 
     if (['sql', 'mysql', 'postgresql', 'sqlserver', 'sqlite', 'oracle'].includes(lang)) {
-        const result = executeSQL(code);
+        const result = await executeSQL(code);
         return result;
     }
 
@@ -762,6 +494,14 @@ export const executeCode = async (language, code, context = {}) => {
       }
       return false;
     };
+
+    window.alert = function(message) {
+      window.parent.postMessage({
+        type: "iframe-alert",
+        message: message
+      }, "*");
+    };
+
   </script>
 </head>
 <body>

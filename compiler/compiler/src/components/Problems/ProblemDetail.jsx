@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, useNavigate } from 'react-router-dom';
 import { problemsApi, progressApi } from '../../services/api';
 import { executeCode, sqlDatabase } from '../../utils/codeExecutor';
@@ -313,9 +314,9 @@ const ProblemDetail = () => {
                         problemId
                     });
                     setIsSolved(true);
-                    alert('Congratulations! All test cases passed!');
+                    toast.success('Congratulations! All test cases passed!');
                 } else {
-                    alert("Incorrect Solution. Please try again.");
+                    toast.error("Incorrect Solution. Please try again.");
                 }
                 return;
             }
@@ -325,7 +326,7 @@ const ProblemDetail = () => {
             if (userResult.error) {
                 setTestResults([{ pass: false, error: userResult.error }]);
                 setOutput(userResult);
-                alert("Your code has errors. Please fix them before submitting.");
+                toast.error("Your code has errors. Please fix them before submitting.");
                 return;
             }
 
@@ -341,11 +342,11 @@ const ProblemDetail = () => {
                 setIsSolved(true);
                 setTestResults([{ pass: true, message: "Solution Correct! Output matches expected result." }]);
                 setOutput(userResult);
-                alert('Congratulations! Problem marked as solved!');
+                toast.success('Congratulations! Problem marked as solved!');
             } else {
                 setTestResults([{ pass: false, error: "Incorrect Solution. Your output does not match the expected result." }]);
                 setOutput(userResult);
-                alert("Incorrect Solution. Please try again.");
+                toast.error("Incorrect Solution. Please try again.");
             }
 
         } catch (e) {

@@ -11,10 +11,11 @@ FROM Customers;`);
 
     // Use the shared database
 
-    const handleRun = () => {
-        const result = executeSQL(sql);
+    const handleRun = async () => {
+        const result = await executeSQL(sql);
         setOutput(result);
     };
+
 
     const renderTable = (tableName, tableData) => {
         return (

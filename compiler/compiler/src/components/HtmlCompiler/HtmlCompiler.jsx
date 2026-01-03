@@ -21,7 +21,7 @@ function HtmlCompiler() {
               ${css}
             </style>
 
-            <!-- Error catcher -->
+            <!-- Error catcher & Alert Interceptor -->
             <script>
               window.onerror = function(message, source, lineno, colno, error) {
                 window.parent.postMessage(
@@ -35,7 +35,15 @@ function HtmlCompiler() {
                   "*"
                 );
               };
+
+              window.alert = function(message) {
+                window.parent.postMessage({
+                  type: "iframe-alert",
+                  message: message
+                }, "*");
+              };
             </script>
+
 
             <!-- User JS code -->
             <script>
