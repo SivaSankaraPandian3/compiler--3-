@@ -384,23 +384,31 @@ const ProblemDetail = () => {
                 Click &quot;Run Code&quot; to see output...
             </div>
         );
-        if (output.error) return <div className="error-message">{output.error}</div>;
-        if (output.html) return (
-            <div className="iframe-output-wrapper">
-                <iframe srcDoc={output.html} title="Output" sandbox="allow-scripts allow-same-origin" style={{ width: '100%', height: '100%', border: 'none', background: 'white' }} />
+
+        return (
+            <div className="output-container">
+                {output.error && <div className="error-message">{output.error}</div>}
+
+                {output.message && <div className="success-message">{output.message}</div>}
+
+                {output.html && (
+                    <div className="iframe-output-wrapper">
+                        <iframe srcDoc={output.html} title="Output" sandbox="allow-scripts allow-same-origin" style={{ width: '100%', height: '100%', border: 'none', background: 'white' }} />
+                    </div>
+                )}
+
+                {output.columns && output.data && (
+                    <div className="table-output-wrapper">
+                        <table className="result-table">
+                            <thead><tr>{output.columns.map(col => <th key={col}>{col}</th>)}</tr></thead>
+                            <tbody>{output.data.map((row, idx) => (<tr key={idx}>{output.columns.map(col => <td key={col}>{row[col]}</td>)}</tr>))}</tbody>
+                        </table>
+                    </div>
+                )}
+
+                {output.output && <pre>{output.output}</pre>}
             </div>
         );
-        if (output.columns && output.data) return (
-            <div className="table-output-wrapper">
-                <table className="result-table">
-                    <thead><tr>{output.columns.map(col => <th key={col}>{col}</th>)}</tr></thead>
-                    <tbody>{output.data.map((row, idx) => (<tr key={idx}>{output.columns.map(col => <td key={col}>{row[col]}</td>)}</tr>))}</tbody>
-                </table>
-            </div>
-        );
-        if (output.output) return <pre>{output.output}</pre>;
-        if (output.message) return <div className="success-message">{output.message}</div>;
-        return <pre>{JSON.stringify(output, null, 2)}</pre>;
     };
 
     const getRelevantTables = () => {

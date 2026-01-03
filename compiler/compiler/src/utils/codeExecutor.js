@@ -106,6 +106,7 @@ import initSqlJs from 'sql.js';
 
 let sqlEngine = null;
 
+// Update to improve error logging
 const getSqlEngine = async () => {
     if (sqlEngine) return sqlEngine;
     try {
@@ -129,6 +130,10 @@ const getSqlEngine = async () => {
             sqlEngine.create_function("curdate", () => new Date().toISOString().split('T')[0]);
             sqlEngine.create_function("iif", (cond, t, f) => cond ? t : f);
             sqlEngine.create_function("isnull", (val, fallback) => (val === null || val === undefined) ? fallback : val);
+            sqlEngine.create_function("ceiling", (x) => (x !== null && x !== undefined) ? Math.ceil(x) : null);
+            sqlEngine.create_function("floor", (x) => (x !== null && x !== undefined) ? Math.floor(x) : null);
+            sqlEngine.create_function("sqrt", (x) => (x !== null && x !== undefined) ? Math.sqrt(x) : null);
+            sqlEngine.create_function("power", (x, y) => (x !== null && y !== null) ? Math.pow(x, y) : null);
         } catch (fErr) {
             console.warn("Could not create SQL function aliases:", fErr);
         }
@@ -154,14 +159,20 @@ const getSqlEngine = async () => {
         return sqlEngine;
     } catch (err) {
         console.error("Failed to initialize SQL engine:", err);
-        return null;
+        throw err; // Propagate error instead of returning null
     }
 };
 
 export const executeSQL = async (query) => {
     try {
-        const engine = await getSqlEngine();
-        if (!engine) throw new Error("SQL Engine not initialized");
+        let engine;
+        try {
+            engine = await getSqlEngine();
+        } catch (e) {
+            throw new Error(`SQL Engine Init Error: ${e.message}`);
+        }
+
+        if (!engine) throw new Error("SQL Engine not initialized (unknown reason)");
 
         // Handle a few common non-SELECT mock responses if needed, 
         // but sqlEngine.run handles them for real now.
@@ -173,10 +184,35 @@ export const executeSQL = async (query) => {
         if (res.length === 0) {
             // Check if it was a non-SELECT statement that affected rows
             if (!lowerQuery.startsWith('select')) {
-                if (lowerQuery.startsWith('insert')) return { message: "Query OK, 1 row inserted" };
-                if (lowerQuery.startsWith('update')) return { message: "Query OK, rows affected" };
-                if (lowerQuery.startsWith('delete')) return { message: "Query OK, rows deleted" };
-                return { message: "Command executed successfully" };
+                let message = "Command executed successfully";
+                if (lowerQuery.startsWith('insert')) message = "Query OK, 1 row inserted";
+                if (lowerQuery.startsWith('update')) message = "Query OK, rows affected";
+                if (lowerQuery.startsWith('delete')) message = "Query OK, rows deleted";
+
+                // Try to auto-fetch the affected table content
+                try {
+                    const match = normalizedQuery.match(/(?:insert\s+into|update|delete\s+from)\s+["']?([a-zA-Z0-9_]+)["']?/i);
+                    if (match && match[1]) {
+                        const tableName = match[1];
+                        const checkRes = engine.exec(`SELECT * FROM "${tableName}" LIMIT 20`);
+                        if (checkRes.length > 0) {
+                            const lastResult = checkRes[0];
+                            const columns = lastResult.columns;
+                            const data = lastResult.values.map(values => {
+                                const obj = {};
+                                columns.forEach((col, i) => {
+                                    obj[col] = values[i];
+                                });
+                                return obj;
+                            });
+                            return { message, columns, data };
+                        }
+                    }
+                } catch (autoSelectErr) {
+                    console.warn("Auto-select failed:", autoSelectErr);
+                }
+
+                return { message };
             }
             return { columns: [], data: [] };
         }
