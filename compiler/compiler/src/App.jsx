@@ -11,6 +11,8 @@ import Quiz from "./components/Quiz/Quiz.jsx";
 import ProblemsTopics from "./components/Problems/ProblemsTopics.jsx";
 import ProblemsList from "./components/Problems/ProblemsList.jsx";
 import ProblemDetail from "./components/Problems/ProblemDetail.jsx";
+import AdminDashboard from "./components/Admin/AdminDashboard.jsx";
+import EditProblem from "./components/Admin/EditProblem.jsx";
 import "./styles/App.css";
 
 function App() {
@@ -36,6 +38,8 @@ function App() {
               <Route path="/problems" element={<ProblemsTopics />} />
               <Route path="/problems/:topic" element={<ProblemsList />} />
               <Route path="/problems/:topic/:problemId" element={<ProblemDetail />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/edit/:problemId" element={<EditProblem />} />
             </Routes>
           </div>
         </div>

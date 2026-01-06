@@ -1,0 +1,27 @@
+function ResetForm() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  
+  const handleReset = () => {
+    setName('');
+    setEmail('');
+  };
+  
+  return (
+    <div>
+      <input 
+        type="text" 
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Name" 
+      />
+      <input 
+        type="email" 
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email" 
+      />
+      <button onClick={handleReset}>Reset</button>
+    </div>
+  );
+}

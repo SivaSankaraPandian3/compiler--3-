@@ -27,6 +27,10 @@ export const problemsApi = {
         const response = await api.post('/problems', problemData);
         return response.data;
     },
+    updateProblem: async (id, problemData) => {
+        const response = await api.put(`/problems/${id}`, problemData);
+        return response.data;
+    },
     deleteProblem: async (id) => {
         const response = await api.delete(`/problems/${id}`);
         return response.data;

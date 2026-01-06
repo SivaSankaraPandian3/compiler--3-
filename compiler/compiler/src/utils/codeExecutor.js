@@ -1,7 +1,7 @@
 
 // Mock Database for SQL
 export const sqlDatabase = {
-    Customers: {
+    CustomersArchive: {
         columns: ["customer_id", "first_name", "last_name", "age", "country"],
         data: [
             { customer_id: 1, first_name: "John", last_name: "Doe", age: 31, country: "USA" },
@@ -11,7 +11,7 @@ export const sqlDatabase = {
             { customer_id: 5, first_name: "Betty", last_name: "Doe", age: 28, country: "UAE" }
         ]
     },
-    Orders: {
+    OrdersArchive: {
         columns: ["order_id", "item", "amount", "customer_id"],
         data: [
             { order_id: 1, item: "Keyboard", amount: 400, customer_id: 4 },
@@ -21,7 +21,7 @@ export const sqlDatabase = {
             { order_id: 5, item: "Mousepad", amount: 250, customer_id: 2 }
         ]
     },
-    Shippings: {
+    ShippingsArchive: {
         columns: ["shipping_id", "status", "customer_id"],
         data: [
             { shipping_id: 1, status: "Pending", customer_id: 2 },
@@ -115,7 +115,7 @@ const getSqlEngine = async () => {
         });
         sqlEngine = new SQL.Database();
 
-        // Add common function aliases for better dialect compatibility
+        // Add common function aliases
         try {
             sqlEngine.create_function("substring", (str, start, len) => {
                 if (str === null || str === undefined) return null;
@@ -138,10 +138,13 @@ const getSqlEngine = async () => {
             console.warn("Could not create SQL function aliases:", fErr);
         }
 
-        // Seed the database with our mock data
-        for (const [tableName, tableInfo] of Object.entries(sqlDatabase)) {
+        // Merge standard database with custom tables from localStorage
+        const customTables = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
+        const finalDatabase = { ...sqlDatabase, ...customTables };
+
+        // Seed the database
+        for (const [tableName, tableInfo] of Object.entries(finalDatabase)) {
             const columnsDef = tableInfo.columns.map(col => `"${col}"`).join(', ');
-            // SQLite doesn't strictly need types, but we'll use TEXT for simplicity as it's coming from JSON
             sqlEngine.run(`CREATE TABLE IF NOT EXISTS "${tableName}" (${columnsDef})`);
 
             for (const row of tableInfo.data) {
@@ -159,9 +162,16 @@ const getSqlEngine = async () => {
         return sqlEngine;
     } catch (err) {
         console.error("Failed to initialize SQL engine:", err);
-        throw err; // Propagate error instead of returning null
+        throw err;
     }
 };
+
+// Listen for custom table additions to reset engine
+if (typeof window !== 'undefined') {
+    window.addEventListener('sql-table-added', () => {
+        sqlEngine = null; // Forces re-initialization on next execution
+    });
+}
 
 export const executeSQL = async (query) => {
     try {
@@ -287,14 +297,18 @@ export const executeJava = (sourceCode) => {
                 variables[arrayMatch[1]] = values;
             }
 
-            // int a = 10, b = 20;
-            const multiIntMatch = line.match(/int\s+(.+);/);
-            if (multiIntMatch && !line.includes('[]') && !line.includes('(')) {
-                const decls = multiIntMatch[1].split(',');
+            // Multi-variable mismatch fix
+            const multiVarMatch = line.match(/(?:int|String|double|float|char)\s+(.+);/);
+            if (multiVarMatch && !line.includes('[]') && !line.includes('(')) {
+                const typePart = multiVarMatch[0].trim().split(/\s+/)[0];
+                const decls = multiVarMatch[1].split(',');
                 decls.forEach(decl => {
                     const parts = decl.split('=');
+                    const varName = parts[0].trim();
                     if (parts.length === 2) {
-                        variables[parts[0].trim()] = evaluateExpression(parts[1].trim());
+                        variables[varName] = evaluateExpression(parts[1].trim());
+                    } else {
+                        variables[varName] = (typePart === 'String' ? "" : 0);
                     }
                 });
             }
@@ -367,10 +381,10 @@ export const executeCpp = (sourceCode) => {
             line = line.trim();
             if (!line) return;
 
-            // Support int a = 10, b = 20;
-            const multiIntMatch = line.match(/int\s+(.+);/);
-            if (multiIntMatch && !line.includes('(')) {
-                const decls = multiIntMatch[1].split(',');
+            // Support int/float/double/char a = 10, b = 20;
+            const multiVarMatch = line.match(/(?:int|float|double|char|string)\s+(.+);/);
+            if (multiVarMatch && !line.includes('(')) {
+                const decls = multiVarMatch[1].split(',');
                 decls.forEach(decl => {
                     const parts = decl.split('=');
                     if (parts.length === 2) {
@@ -378,7 +392,7 @@ export const executeCpp = (sourceCode) => {
                         const val = parts[1].trim();
                         if (!isNaN(val)) variables[varName] = Number(val);
                         else {
-                            const mathMatch = val.match(/(\w+)\s*([\+\-\*\/])\s*(\w+)/);
+                            const mathMatch = val.match(/([\w\d]+)\s*([\+\-\*\/])\s*([\w\d]+)/);
                             if (mathMatch) {
                                 const v1 = !isNaN(mathMatch[1]) ? Number(mathMatch[1]) : variables[mathMatch[1]];
                                 const v2 = !isNaN(mathMatch[3]) ? Number(mathMatch[3]) : variables[mathMatch[3]];
@@ -390,6 +404,9 @@ export const executeCpp = (sourceCode) => {
                                 }
                             }
                         }
+                    } else {
+                        const varName = parts[0].trim();
+                        variables[varName] = 0;
                     }
                 });
             }
@@ -453,7 +470,32 @@ export const executeCode = async (language, code, context = {}) => {
             context.pyodide.setStdout({
                 batched: (msg) => { output += msg + "\n"; }
             });
-            const result = await context.pyodide.runPythonAsync(code);
+
+            // Mock input() if inputs are provided
+            let codeToRun = code;
+            if (context.inputs && Array.isArray(context.inputs)) {
+                // Escape input strings to avoid injection or syntax errors in Python string
+                const safeInputs = context.inputs.map(i => String(i).replace(/"/g, '\\"').replace(/\n/g, '\\n'));
+                const inputList = `["${safeInputs.join('", "')}"]`;
+
+                const mockInput = `
+import sys
+_input_buffer = ${inputList}
+_input_idx = 0
+def input(prompt=None):
+    global _input_idx
+    if prompt:
+        print(prompt, end='')
+    if _input_idx < len(_input_buffer):
+        val = _input_buffer[_input_idx]
+        _input_idx += 1
+        return str(val)
+    raise EOFError("EOF when reading a line")
+`;
+                codeToRun = mockInput + "\n" + code;
+            }
+
+            const result = await context.pyodide.runPythonAsync(codeToRun);
             if (!output && result !== undefined) {
                 output = result.toString();
             }
@@ -465,6 +507,9 @@ export const executeCode = async (language, code, context = {}) => {
 
     if (lang === 'javascript' || lang === 'js') {
         try {
+            // Check for syntax errors first
+            new Function(code);
+
             let logs = [];
             const originalLog = console.log;
             console.log = (...args) => logs.push(args.join(' '));
@@ -472,7 +517,7 @@ export const executeCode = async (language, code, context = {}) => {
             console.log = originalLog;
             return { output: logs.join('\n') || "Executed successfully." };
         } catch (e) {
-            return { error: e.message };
+            return { error: `Syntax/Runtime Error: ${e.message}` };
         }
     }
 
@@ -485,7 +530,18 @@ export const executeCode = async (language, code, context = {}) => {
         }
 
         const processedCode = (lang === 'css' && !hasHtmlTags)
-            ? `<style>${code}</style><div class="container"><div class="box">Default Box</div></div>`
+            ? `<style>${code}</style>
+               <div class="container">
+                 <div class="box text-red text-blue primary active">Default Box (Styled Area)</div>
+                 <h1 class="header">Main Heading</h1>
+                 <p class="text-p">This is a sample paragraph for styling.</p>
+                 <a href="#" class="link">Sample Link</a>
+                 <button class="btn">Button</button>
+                 <ul class="list">
+                   <li>List Item 1</li>
+                   <li>List Item 2</li>
+                 </ul>
+               </div>`
             : code;
 
         // Use Base64 to safely inject code and avoid any template literal escaping issues
@@ -588,6 +644,15 @@ export const executeCode = async (language, code, context = {}) => {
     }
 
     if (lang === 'react') {
+        // Pre-validate React syntax if Babel is available in main thread
+        if (typeof Babel !== 'undefined') {
+            try {
+                Babel.transform(code, { presets: ['react'] });
+            } catch (e) {
+                return { error: `Syntax Error: ${e.message}` };
+            }
+        }
+
         const base64Code = btoa(unescape(encodeURIComponent(code)));
         const reactTemplate = `
 <!DOCTYPE html>
@@ -619,7 +684,7 @@ export const executeCode = async (language, code, context = {}) => {
 <body>
   <div id="root"></div>
   <div id="console-logs"></div>
-  <script type="text/babel">
+  <script>
     const logContainer = document.getElementById('console-logs');
     const originalLog = console.log;
     const originalError = console.error;
@@ -645,23 +710,40 @@ export const executeCode = async (language, code, context = {}) => {
             .replace(/export (const|class|function)/g, '$1');
 
         const evalCode = Babel.transform(processedCode, { presets: ['react'] }).code;
-        eval(evalCode);
+        
+        // Execute in global scope
+        window.eval(evalCode);
+        
         let ComponentToRender = null;
-        if (window.DefaultExport) ComponentToRender = window.DefaultExport;
-        else if (typeof App !== 'undefined') ComponentToRender = App;
-        else if (typeof Counter !== 'undefined') ComponentToRender = Counter;
-        else {
-           const possibleComponents = Object.keys(window).filter(key => 
-               typeof window[key] === 'function' && !['React', 'ReactDOM', 'Babel'].includes(key) &&
-               (/^[A-Z]/.test(key) || key.toLowerCase() === 'counter' || key.toLowerCase() === 'app')
-           );
-           if (possibleComponents.length > 0) ComponentToRender = window[possibleComponents[0]];
+        if (window.DefaultExport) {
+            ComponentToRender = window.DefaultExport;
+        } else if (window.App) {
+            ComponentToRender = window.App;
+        } else if (window.Counter) {
+            ComponentToRender = window.Counter;
+        } else if (typeof App !== 'undefined') {
+            ComponentToRender = App;
+        } else if (typeof Counter !== 'undefined') {
+            ComponentToRender = Counter;
+        } else {
+            // Search all window properties for likely components
+            const potentialNames = Object.keys(window).filter(key => 
+                typeof window[key] === 'function' && 
+                !['React', 'ReactDOM', 'Babel'].includes(key) &&
+                (/^[A-Z]/.test(key) || key.toLowerCase() === 'app' || key.toLowerCase() === 'counter')
+            );
+            if (potentialNames.length > 0) {
+                // Prefer App or Counter if they exist among these
+                const bestMatch = potentialNames.find(n => n.toLowerCase() === 'app' || n.toLowerCase() === 'counter') || potentialNames[0];
+                ComponentToRender = window[bestMatch];
+            }
         }
+
         if (ComponentToRender) {
             const root = ReactDOM.createRoot(document.getElementById('root'));
             root.render(React.createElement(ComponentToRender));
         } else {
-            addLog('Could not find a React component to render. Make sure your component name is capitalized.', 'error');
+            addLog('Could not find a React component to render. Make sure your component name is capitalized (e.g., function App() { ... }).', 'error');
         }
     } catch (e) {
         addLog('Runtime Error: ' + e.message, 'error');
@@ -674,27 +756,38 @@ export const executeCode = async (language, code, context = {}) => {
     }
 
     if (lang === 'angular') {
+        // Pre-validate Angular/TS syntax if Babel is available
+        if (typeof Babel !== 'undefined') {
+            try {
+                Babel.transform(code, {
+                    presets: ['typescript'],
+                    plugins: [['proposal-decorators', { legacy: true }], 'proposal-class-properties']
+                });
+            } catch (e) {
+                return { error: `Angular/TS Syntax Error: ${e.message}` };
+            }
+        }
         const base64Code = btoa(unescape(encodeURIComponent(code)));
         const angularTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
-  <script src="https://unpkg.com/reflect-metadata@0.1.13/Reflect.js"></script>
-  <script src="https://unpkg.com/zone.js@0.14.4/dist/zone.min.js"></script>
-  <script src="https://unpkg.com/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js"></script>
-  <script src="https://unpkg.com/@angular/core@17.3.0/bundles/core.umd.js"></script>
-  <script src="https://unpkg.com/@angular/common@17.3.0/bundles/common.umd.js"></script>
-  <script src="https://unpkg.com/@angular/compiler@17.3.0/bundles/compiler.umd.js"></script>
-  <script src="https://unpkg.com/@angular/platform-browser@17.3.0/bundles/platform-browser.umd.js"></script>
-  <script src="https://unpkg.com/@angular/animations@17.3.0/bundles/animations.umd.js"></script>
-  <script src="https://unpkg.com/@angular/animations@17.3.0/bundles/animations-browser.umd.js"></script>
-  <script src="https://unpkg.com/@angular/platform-browser@17.3.0/bundles/platform-browser-animations.umd.js"></script>
-  <script src="https://unpkg.com/@angular/platform-browser-dynamic@17.3.0/bundles/platform-browser-dynamic.umd.js"></script>
-  <script src="https://unpkg.com/@angular/forms@17.3.0/bundles/forms.umd.js"></script>
-  <script src="https://unpkg.com/@angular/router@17.3.0/bundles/router.umd.js"></script>
-  <script src="https://unpkg.com/@angular/common@17.3.0/bundles/common-http.umd.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/reflect-metadata@0.1.13/Reflect.js" crossorigin></script>
+  <script src="https://unpkg.com/zone.js@0.14.4/bundles/zone.umd.min.js" crossorigin></script>
+  <script src="https://unpkg.com/rxjs@7.8.1/dist/bundles/rxjs.umd.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/core@12.2.16/bundles/core.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/common@12.2.16/bundles/common.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/compiler@12.2.16/bundles/compiler.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/platform-browser@12.2.16/bundles/platform-browser.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/animations@12.2.16/bundles/animations.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/animations@12.2.16/bundles/animations-browser.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/platform-browser@12.2.16/bundles/platform-browser-animations.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/platform-browser-dynamic@12.2.16/bundles/platform-browser-dynamic.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/forms@12.2.16/bundles/forms.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/router@12.2.16/bundles/router.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@angular/common@12.2.16/bundles/common-http.umd.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; margin: 0; background: #f8fafc; color: #1e293b; }
     #console-logs { 
@@ -731,69 +824,102 @@ export const executeCode = async (language, code, context = {}) => {
         if (typeof ng === 'undefined' || typeof Babel === 'undefined') {
             addLog('Waiting for Angular libraries to load...', 'info');
             let attempts = 0;
-            while ((typeof ng === 'undefined' || typeof Babel === 'undefined') && attempts < 50) {
+            // Wait up to 30 seconds for slow connections
+            while ((typeof ng === 'undefined' || typeof Babel === 'undefined') && attempts < 300) {
                 await new Promise(r => setTimeout(r, 100));
                 attempts++;
+                // Show progress every 5 seconds
+                if (attempts % 50 === 0) {
+                    const elapsed = attempts / 10;
+                    addLog('Still loading... (' + elapsed + 's elapsed)', 'info');
+                }
             }
             if (typeof ng === 'undefined' || typeof Babel === 'undefined') {
-                throw new Error('Angular or Babel failed to load. Please check your internet connection.');
+                const missing = [];
+                if (typeof ng === 'undefined') missing.push('Angular');
+                if (typeof Babel === 'undefined') missing.push('Babel');
+                throw new Error(missing.join(' and ') + ' failed to load. Please check your internet connection or firewall.');
             }
+            addLog('Libraries loaded successfully!', 'info');
         }
 
         const rawCode = decodeURIComponent(escape(atob('${base64Code}')));
         
         // Define common Angular globals for easier access
-        const { Component, NgModule, ViewChild, Input, Output, EventEmitter, OnInit, OnDestroy } = ng.core;
-        const { CommonModule } = ng.common;
-        const { HttpClientModule } = ng.common.http;
-        const { FormsModule, ReactiveFormsModule } = ng.forms;
-        const { BrowserModule } = ng.platformBrowser;
-        const { BrowserAnimationsModule } = ng.platformBrowser.animations;
         const { platformBrowserDynamic } = ng.platformBrowserDynamic;
-
-        // Strip imports/exports and transpile
-        const processedCode = rawCode
-            .replace(/import\\s+[\\s\\S]*?\\s+from\\s+['"].*?['"];?/g, '')
-            .replace(/export\\s+class/g, 'class');
-
-        const transpiled = Babel.transform(processedCode, {
-            presets: ['typescript'],
-            plugins: [['proposal-decorators', { legacy: true }], 'proposal-class-properties']
-        }).code;
-
-        // Execute transpiled component code
-        eval(transpiled);
-
-        // Auto-detect root component
-        const classMatch = processedCode.match(/class\\s+(\\w+)/);
-        const className = classMatch ? classMatch[1] : 'AppComponent';
         
-        let RootComponent = null;
-        try { RootComponent = eval(className); } catch(e) {
-            RootComponent = window[className];
+        // Define common Angular decorators globally for transpiled code access
+        window.Component = ng.core.Component;
+        window.NgModule = ng.core.NgModule;
+        window.Input = ng.core.Input;
+        window.Output = ng.core.Output;
+        window.ViewChild = ng.core.ViewChild;
+        window.EventEmitter = ng.core.EventEmitter;
+        window.OnInit = ng.core.OnInit;
+        window.OnDestroy = ng.core.OnDestroy;
+        window.CommonModule = ng.common.CommonModule;
+        window.FormsModule = ng.forms.FormsModule;
+        window.ReactiveFormsModule = ng.forms.ReactiveFormsModule;
+        window.HttpClientModule = ng.common.http.HttpClientModule;
+        window.BrowserModule = ng.platformBrowser.BrowserModule;
+        window.BrowserAnimationsModule = ng.platformBrowser.animations.BrowserAnimationsModule;
+
+        let processedCode = rawCode
+            .replace(/import\s+[\s\S]*?\s+from\s+['"].*?['"];?/g, '')
+            .replace(/export\s+class/g, 'class');
+
+        // Check if it's a full component or just a template
+        if (!processedCode.includes('@Component')) {
+            addLog('No @Component detected. Wrapping as template...', 'info');
+            processedCode = "@Component({\n" +
+                "  selector: 'app-root',\n" +
+                "  template: " + JSON.stringify(processedCode) + "\n" +
+                "})\n" +
+                "class AppComponent {\n" +
+                "  doSomething() { console.log('Button clicked!'); }\n" +
+                "}";
         }
 
-        if (!RootComponent) {
-            throw new Error(\`Could not find component class: $\{className\}\`);
-        }
+    const transpiled = Babel.transform(processedCode, {
+        filename: 'component.ts',
+        presets: ['typescript'],
+        plugins: [['proposal-decorators', { legacy: true }], 'proposal-class-properties']
+    }).code;
 
-        // Create dynamic module
-        const moduleCode = Babel.transform(\`
-            @ng.core.NgModule({
+    // Auto-detect Root Component Name
+    const classMatch = processedCode.match(/class\\s+(\\w+)/);
+    const className = classMatch ? classMatch[1] : 'AppComponent';
+
+    // Execute transpiled component code and ensure the class is attached to window
+    addLog('Executing component code...', 'info');
+    eval(transpiled + '\\nif (typeof ' + className + ' !== "undefined") window["' + className + '"] = ' + className + ';');
+
+    const RootComponent = window[className];
+
+    if (!RootComponent) {
+        throw new Error('Could not find component class: ' + className);
+    }
+
+    window.RootComponent = RootComponent;
+
+    // Create dynamic module
+    const moduleCode = Babel.transform(\`
+            @NgModule({
               imports: [
-                ng.platformBrowser.BrowserModule,
-                ng.platformBrowser.animations.BrowserAnimationsModule,
-                ng.common.CommonModule,
-                ng.common.http.HttpClientModule,
-                ng.forms.FormsModule,
-                ng.forms.ReactiveFormsModule
+                BrowserModule,
+                BrowserAnimationsModule,
+                CommonModule,
+                HttpClientModule,
+                FormsModule,
+                ReactiveFormsModule
               ],
-              declarations: [RootComponent],
-              bootstrap: [RootComponent]
+              declarations: [window.RootComponent],
+              bootstrap: [window.RootComponent]
             })
             class DynamicModule {}
             window.DynamicModule = DynamicModule;
         \`, {
+            filename: 'module.ts',
             presets: ['typescript'],
             plugins: [['proposal-decorators', { legacy: true }], 'proposal-class-properties']
         }).code;
@@ -801,6 +927,7 @@ export const executeCode = async (language, code, context = {}) => {
         eval(moduleCode);
 
         platformBrowserDynamic().bootstrapModule(window.DynamicModule)
+          .then(() => addLog('✓ Angular bootstrapped successfully!', 'info'))
           .catch(err => addLog('Bootstrap Error: ' + err.message, 'error'));
 
       } catch (e) {

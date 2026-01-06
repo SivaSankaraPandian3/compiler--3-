@@ -5,9 +5,22 @@ import "./SqlCompiler.css";
 
 const SqlCompiler = () => {
     const [sql, setSql] = useState(`SELECT first_name, age
-FROM Customers;`);
+FROM CustomersArchive;`);
     const [output, setOutput] = useState([]);
-    const [activeTable, setActiveTable] = useState("Customers");
+    const [activeTable, setActiveTable] = useState("CustomersArchive");
+    const [db, setDb] = useState(() => {
+        const custom = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
+        return { ...sqlDatabase, ...custom };
+    });
+
+    useEffect(() => {
+        const updateDb = () => {
+            const custom = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
+            setDb({ ...sqlDatabase, ...custom });
+        };
+        window.addEventListener('sql-table-added', updateDb);
+        return () => window.removeEventListener('sql-table-added', updateDb);
+    }, []);
 
     // Use the shared database
 
@@ -51,7 +64,7 @@ FROM Customers;`);
                     <h3>Available Tables</h3>
                 </div>
                 <div className="schema-tables">
-                    {Object.keys(sqlDatabase).map(tableName => (
+                    {Object.keys(db).map(tableName => (
                         <div
                             key={tableName}
                             className={`table-item ${activeTable === tableName ? 'active' : ''}`}
@@ -60,7 +73,7 @@ FROM Customers;`);
                             <div className="table-name">📊 {tableName} [-]</div>
                             {activeTable === tableName && (
                                 <div className="table-columns">
-                                    {sqlDatabase[tableName].columns.map(col => {
+                                    {db[tableName].columns.map(col => {
                                         // Detect column type
                                         const isId = col.includes('id');
                                         const type = isId ? '[integer]' : '[varchar(100)]';
@@ -142,8 +155,8 @@ FROM Customers;`);
                     <h3>Available Tables</h3>
                 </div>
                 <div className="tables-content">
-                    {Object.keys(sqlDatabase).map(tableName =>
-                        renderTable(tableName, sqlDatabase[tableName])
+                    {Object.keys(db).map(tableName =>
+                        renderTable(tableName, db[tableName])
                     )}
                 </div>
             </div>

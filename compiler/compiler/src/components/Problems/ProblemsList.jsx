@@ -198,7 +198,6 @@ const ProblemsList = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="minimal-search-input"
                         />
-                        <span className="minimal-search-icon">🔍</span>
                     </div>
 
                     <div className="minimal-filter-group">
@@ -226,9 +225,7 @@ const ProblemsList = () => {
                         <tr>
                             <th>S.no</th>
                             <th>Topic name</th>
-                            <th>Status</th>
                             <th>Difficulty Level</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -252,23 +249,9 @@ const ProblemsList = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <span className={`status-badge ${solved ? 'solved' : 'unsolved'}`}>
-                                            {solved ? 'Solved' : 'Unsolved'}
-                                        </span>
-                                    </td>
-                                    <td>
                                         <span className={`difficulty-badge difficulty-${problem.difficulty}`}>
                                             {problem.difficulty}
                                         </span>
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="btn-delete"
-                                            onClick={(e) => handleDelete(e, problem._id)}
-                                            title="Delete Problem"
-                                        >
-                                            🗑️
-                                        </button>
                                     </td>
                                 </tr>
                             );

@@ -83,34 +83,34 @@ System.out.println("Length: " + fullName);`
 
 export const sqlExamples = {
   selectAll: `-- Select all customers
-SELECT * FROM Customers;`,
+SELECT * FROM CustomersArchive;`,
 
   selectColumns: `-- Select specific columns
 SELECT first_name, last_name, age 
-FROM Customers;`,
+FROM CustomersArchive;`,
 
   whereClause: `-- Filter with WHERE clause
 SELECT first_name, age 
-FROM Customers 
+FROM CustomersArchive 
 WHERE age > 25;`,
 
   orderBy: `-- Sort results
 SELECT first_name, age 
-FROM Customers 
+FROM CustomersArchive 
 ORDER BY age DESC;`,
 
   join: `-- Join tables (Note: This is an example, actual JOIN may not work in current implementation)
 SELECT c.first_name, o.item, o.amount
-FROM Customers c, Orders o
+FROM CustomersArchive c, OrdersArchive o
 WHERE c.customer_id = o.customer_id;`,
 
   count: `-- Count records
 SELECT COUNT(*) as total_customers 
-FROM Customers;`,
+FROM CustomersArchive;`,
 
   groupBy: `-- Group by country
 SELECT country, COUNT(*) as count
-FROM Customers
+FROM CustomersArchive
 GROUP BY country;`,
 
   substring: `-- Substring example

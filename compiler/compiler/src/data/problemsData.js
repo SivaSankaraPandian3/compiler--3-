@@ -42,8 +42,8 @@ SELECT * FROM pets`,
                 difficulty: 2,
                 tags: ["sql"],
                 starterCode: `-- Write your SQL query here
-SELECT * FROM Customers`,
-                solution: `SELECT * FROM Customers WHERE amount > 1000;`,
+SELECT * FROM customers`,
+                solution: `SELECT * FROM customers WHERE total_purchases > 1000;`,
                 hints: ["Use WHERE clause"]
             },
             {
@@ -225,8 +225,8 @@ SELECT MAX(order_amount) FROM orders`,
                 difficulty: 1,
                 tags: ["mysql", "basics"],
                 starterCode: `-- Write your MySQL query here
-SELECT DISTINCT country FROM Customers`,
-                solution: `SELECT DISTINCT country FROM Customers;`,
+SELECT DISTINCT country FROM CustomersArchive`,
+                solution: `SELECT DISTINCT country FROM CustomersArchive;`,
                 hints: ["Use DISTINCT keyword"]
             },
             {
@@ -236,8 +236,8 @@ SELECT DISTINCT country FROM Customers`,
                 difficulty: 1,
                 tags: ["mysql"],
                 starterCode: `-- Write your MySQL query here
-SELECT * FROM Customers`,
-                solution: `SELECT * FROM Customers WHERE age < 25;`,
+SELECT * FROM CustomersArchive`,
+                solution: `SELECT * FROM CustomersArchive WHERE age < 25;`,
                 hints: ["Use WHERE age < 25"]
             }
         ]
@@ -256,8 +256,8 @@ SELECT * FROM Customers`,
                 difficulty: 1,
                 tags: ["postgresql", "basics"],
                 starterCode: `-- Write your PostgreSQL query here
-SELECT * FROM Orders`,
-                solution: `SELECT * FROM Orders WHERE item = 'Keyboard';`,
+SELECT * FROM OrdersArchive`,
+                solution: `SELECT * FROM OrdersArchive WHERE item = 'Keyboard';`,
                 hints: ["Filter by item name"]
             },
             {
@@ -267,8 +267,8 @@ SELECT * FROM Orders`,
                 difficulty: 2,
                 tags: ["postgresql"],
                 starterCode: `-- Write your PostgreSQL query here
-SELECT * FROM Orders`,
-                solution: `SELECT * FROM Orders WHERE amount > 500;`,
+SELECT * FROM OrdersArchive`,
+                solution: `SELECT * FROM OrdersArchive WHERE amount > 500;`,
                 hints: ["Use WHERE amount > 500"]
             }
         ]
@@ -287,8 +287,8 @@ SELECT * FROM Orders`,
                 difficulty: 1,
                 tags: ["sqlserver", "basics"],
                 starterCode: `-- Write your SQL Server query here
-SELECT * FROM Shippings`,
-                solution: `SELECT * FROM Shippings WHERE status = 'Pending';`,
+SELECT * FROM ShippingsArchive`,
+                solution: `SELECT * FROM ShippingsArchive WHERE status = 'Pending';`,
                 hints: ["Filter by status"]
             },
             {
@@ -298,8 +298,8 @@ SELECT * FROM Shippings`,
                 difficulty: 2,
                 tags: ["sqlserver"],
                 starterCode: `-- Write your SQL Server query here
-SELECT AVG(amount) FROM Orders`,
-                solution: `SELECT AVG(amount) as average_amount FROM Orders;`,
+SELECT AVG(amount) FROM OrdersArchive`,
+                solution: `SELECT AVG(amount) as average_amount FROM OrdersArchive;`,
                 hints: ["Use AVG() function"]
             }
         ]
