@@ -142,6 +142,11 @@ const AdminDashboard = () => {
 
             // Store in localStorage for the session (to be picked up by codeExecutor)
             const customTables = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
+
+            // Remove any existing table with the same name (case-insensitive)
+            const existingKey = Object.keys(customTables).find(k => k.toLowerCase() === newTable.name.toLowerCase());
+            if (existingKey) delete customTables[existingKey];
+
             customTables[newTable.name] = {
                 columns,
                 data: parsedData

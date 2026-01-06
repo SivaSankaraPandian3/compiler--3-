@@ -70,7 +70,7 @@ SELECT * FROM employees`,
                 title: "Gadget Grove's Inventory and Sales Tracking",
                 description: `A gadget store has two tables:
 
-**products** table:
+**ElectronicsProducts** table:
 - product_id (INT)
 - product_name (VARCHAR)
 - category (VARCHAR)
@@ -87,10 +87,10 @@ Write a query to find the total quantity sold for each product. Display product_
                 tags: ["sql", "pre-medium-pt-3rd-sem-2k"],
                 starterCode: `-- Write your SQL query here
 SELECT p.product_name, SUM(s.quantity_sold) as total_quantity
-FROM products p
+FROM ElectronicsProducts p
 JOIN sales s ON p.product_id = s.product_id`,
                 solution: `SELECT p.product_name, SUM(s.quantity_sold) as total_quantity
-FROM products p
+FROM ElectronicsProducts p
 JOIN sales s ON p.product_id = s.product_id
 GROUP BY p.product_name;`,
                 hints: ["Use JOIN to combine tables", "Use SUM and GROUP BY"]
@@ -174,20 +174,20 @@ SELECT AVG(salary) FROM employees`,
             {
                 id: 9,
                 title: "Tech Haven Electronics",
-                description: `An electronics store has a 'products' table:
+                description: `An electronics store has a 'ElectronicsProducts' table:
         
 - product_id (INT)
 - product_name (VARCHAR)
 - brand (VARCHAR)
 - price (DECIMAL)
 - warranty_years (INT)
-
+        
 Write a query to select all products from 'Samsung' brand with a warranty of at least 2 years, ordered by price.`,
                 difficulty: 1,
                 tags: ["sql", "post-medium-pt-3rd-sem-2k"],
                 starterCode: `-- Write your SQL query here
-SELECT * FROM products`,
-                solution: `SELECT * FROM products WHERE brand = 'Samsung' AND warranty_years >= 2 ORDER BY price;`,
+SELECT * FROM ElectronicsProducts`,
+                solution: `SELECT * FROM ElectronicsProducts WHERE brand = 'Samsung' AND warranty_years >= 2 ORDER BY price;`,
                 hints: ["Filter by brand and warranty", "Use ORDER BY"]
             },
             {

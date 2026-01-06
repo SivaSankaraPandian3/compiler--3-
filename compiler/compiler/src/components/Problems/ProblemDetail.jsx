@@ -369,8 +369,20 @@ const ProblemDetail = () => {
     const relevantTables = (() => {
         if (!['sql', 'mysql', 'postgresql', 'sqlserver'].includes(topic) || !problem) return [];
         const custom = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
-        const allTables = { ...sqlDatabase, ...custom };
-        return Object.keys(allTables).filter(name => new RegExp(`\\b${name}\\b`, 'i').test(problem.description)).map(name => ({ name, ...allTables[name] }));
+
+        // Build unique set, custom overwriting built-in
+        const mergedTables = { ...sqlDatabase };
+        Object.entries(custom).forEach(([key, val]) => {
+            const existingKey = Object.keys(mergedTables).find(k => k.toLowerCase() === key.toLowerCase());
+            if (existingKey) delete mergedTables[existingKey];
+            mergedTables[key] = val;
+        });
+
+        const tableNames = Object.keys(mergedTables).filter(name =>
+            new RegExp(`\\b${name}\\b`, 'i').test(problem.description)
+        );
+
+        return tableNames.map(name => ({ name, ...mergedTables[name] }));
     })();
 
     if (loading) return <div className="loading">Loading...</div>;

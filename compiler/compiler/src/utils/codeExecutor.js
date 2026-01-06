@@ -56,7 +56,7 @@ export const sqlDatabase = {
             { emp_id: 5, emp_name: "Eve", department: "Sales", salary: 65000, hire_date: "2022-02-14", position: "Associate" }
         ]
     },
-    products: {
+    ElectronicsProducts: {
         columns: ["product_id", "product_name", "category", "price", "brand", "warranty_years"],
         data: [
             { product_id: 1, product_name: "Laptop", category: "Electronics", price: 1000, brand: "Samsung", warranty_years: 2 },
@@ -140,12 +140,22 @@ const getSqlEngine = async () => {
 
         // Merge standard database with custom tables from localStorage
         const customTables = JSON.parse(localStorage.getItem('customSqlTables') || '{}');
-        const finalDatabase = { ...sqlDatabase, ...customTables };
+        const finalDatabase = { ...sqlDatabase };
+
+        // Merge case-insensitively: custom tables overwrite built-in ones
+        Object.entries(customTables).forEach(([key, val]) => {
+            const existingKey = Object.keys(finalDatabase).find(k => k.toLowerCase() === key.toLowerCase());
+            if (existingKey) delete finalDatabase[existingKey];
+            finalDatabase[key] = val;
+        });
 
         // Seed the database
         for (const [tableName, tableInfo] of Object.entries(finalDatabase)) {
             const columnsDef = tableInfo.columns.map(col => `"${col}"`).join(', ');
-            sqlEngine.run(`CREATE TABLE IF NOT EXISTS "${tableName}" (${columnsDef})`);
+
+            // Clean drop and recreate to ensure schema match
+            sqlEngine.run(`DROP TABLE IF EXISTS "${tableName}"`);
+            sqlEngine.run(`CREATE TABLE "${tableName}" (${columnsDef})`);
 
             for (const row of tableInfo.data) {
                 const keys = Object.keys(row);
