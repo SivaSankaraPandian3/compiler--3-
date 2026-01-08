@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
@@ -69,6 +69,14 @@ export const progressApi = {
     },
     getSolvedCount: async (userId, topic) => {
         const response = await api.get(`/progress/${userId}/${topic}/solved-count`);
+        return response.data;
+    }
+};
+
+// Students API
+export const studentsApi = {
+    submitQuiz: async (data) => {
+        const response = await api.post('/students/submit-quiz', data);
         return response.data;
     }
 };

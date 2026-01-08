@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { quizzesApi } from '../../services/api';
+import { quizzesApi, studentsApi } from '../../services/api';
 import './Quiz.css';
 
 const Quiz = () => {
@@ -54,32 +54,22 @@ const Quiz = () => {
         setSubmissionStatus({ loading: true, error: null, success: false });
 
         try {
-            const response = await fetch('http://localhost:5000/api/students/submit-quiz', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: formData.email,
-                    phone: formData.phone,
-                    quizResult: {
-                        topic,
-                        level,
-                        score,
-                        totalQuestions: quizData.questions.length,
-                        percentage: (score / quizData.questions.length) * 100,
-                        passed: true
-                    }
-                })
+            const data = await studentsApi.submitQuiz({
+                email: formData.email,
+                phone: formData.phone,
+                quizResult: {
+                    topic,
+                    level,
+                    score,
+                    totalQuestions: quizData.questions.length,
+                    percentage: (score / quizData.questions.length) * 100,
+                    passed: true
+                }
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Submission failed');
-            }
 
             setSubmissionStatus({ loading: false, error: null, success: true });
         } catch (err) {
-            setSubmissionStatus({ loading: false, error: err.message, success: false });
+            setSubmissionStatus({ loading: false, error: err.response?.data?.message || err.message, success: false });
         }
     };
 
