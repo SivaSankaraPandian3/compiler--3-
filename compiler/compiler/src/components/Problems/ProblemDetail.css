@@ -15,6 +15,27 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    gap: 15px;
+}
+
+.btn-back {
+    padding: 10px 24px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-back:hover {
+    background: #333;
+    transform: translateX(-4px);
 }
 
 .solved-badge {
@@ -567,19 +588,26 @@
 
 @media (max-width: 768px) {
     .problem-detail-container {
-        padding: 10px;
-        padding-bottom: 50px;
+        padding: 12px;
+        padding-bottom: 60px;
     }
 
     .problem-detail-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .btn-back {
+        width: 100%;
+        justify-content: center;
     }
 
     .solved-badge {
-        padding: 6px 16px;
-        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
     }
 
     .problem-description-panel,
@@ -588,7 +616,7 @@
     }
 
     .problem-header-info h1 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
     }
 
     .problem-meta {
@@ -596,62 +624,72 @@
     }
 
     .difficulty-badge {
-        padding: 5px 14px;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     .tag {
-        padding: 3px 10px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
     }
 
     .problem-description h3 {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
     }
 
     .description-text {
         font-size: 0.95rem;
     }
 
-
-
     .editor-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: stretch;
+        gap: 15px;
+        padding: 20px;
     }
 
     .editor-header h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    .dialect-selector {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
     }
 
     .btn-reset {
         width: 100%;
-        padding: 10px;
+        padding: 12px;
+        font-size: 1rem;
     }
 
     .code-editor-wrapper {
-        height: 250px;
+        height: 350px;
     }
 
     .editor-buttons {
         flex-direction: column;
-        gap: 10px;
+        padding: 20px;
     }
 
     .btn-run,
-    .btn-submit {
+    .btn-submit,
+    .btn-save-sol {
         width: 100%;
-        padding: 12px;
     }
 
-    .output-panel h4 {
-        font-size: 1rem;
+    .output-panel {
+        padding: 20px;
     }
 
     .output-content {
-        max-height: 150px;
-        font-size: 0.85rem;
+        max-height: 200px;
+    }
+
+    .table-scroll-container {
+        margin: 0 -15px;
+        padding: 0 15px;
+        width: calc(100% + 30px);
     }
 }
 
@@ -659,24 +697,41 @@
 @media (max-width: 480px) {
     .problem-detail-container {
         padding: 8px;
+        padding-bottom: 40px;
+    }
+
+    .problem-detail-header {
+        margin-bottom: 15px;
     }
 
     .btn-back {
-        padding: 8px 14px;
-        font-size: 0.9rem;
+        padding: 12px;
+        font-size: 0.95rem;
     }
 
     .problem-description-panel,
     .problem-editor-panel {
         padding: 15px;
+        border-radius: 8px;
     }
 
     .problem-header-info h1 {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .problem-meta {
+        margin-bottom: 20px;
+    }
+
+    .difficulty-badge {
+        font-size: 0.85rem;
+        margin-right: 10px;
     }
 
     .problem-description h3 {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        margin-bottom: 12px;
     }
 
     .description-text {
@@ -684,56 +739,61 @@
         line-height: 1.6;
     }
 
-
+    .editor-header {
+        padding: 15px;
+        gap: 12px;
+    }
 
     .editor-header h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .dialect-selector,
+    .btn-reset {
+        padding: 10px;
+        font-size: 0.9rem;
     }
 
     .code-editor-wrapper {
-        height: 220px;
+        height: 300px;
+    }
+
+    .editor-buttons {
+        padding: 15px;
+        gap: 10px;
     }
 
     .btn-run,
-    .btn-submit {
-        padding: 10px;
+    .btn-submit,
+    .btn-save-sol {
+        padding: 12px;
         font-size: 0.95rem;
     }
 
     .output-panel {
-        padding: 12px;
+        padding: 15px;
+    }
+
+    .output-panel h4 {
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
     }
 
     .output-content {
-        padding: 12px;
-        min-height: 80px;
-        max-height: 120px;
+        max-height: 180px;
+        font-size: 0.85rem;
     }
 
-    .output-content pre {
-        font-size: 0.8rem;
+    .table-scroll-container {
+        margin: 0 -10px;
+        padding: 0 10px;
+        width: calc(100% + 20px);
     }
 
-    .test-case {
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-
-    .test-icon {
-        font-size: 1rem;
-    }
-
-    .test-error {
-        font-size: 0.8rem;
-    }
-
-    .problem-error {
-        padding: 40px 20px;
-        margin: 50px 10px;
-    }
-
-    .problem-error h2 {
-        font-size: 1.5rem;
+    .question-table th,
+    .question-table td {
+        padding: 8px 10px;
+        font-size: 0.85rem;
     }
 }
 

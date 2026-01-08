@@ -411,10 +411,12 @@ const ProblemDetail = () => {
                             {relevantTables.map((table, idx) => (
                                 <div key={idx} className="question-table-wrapper">
                                     <h4>Table: {table.name}</h4>
-                                    <table className="question-table">
-                                        <thead><tr>{table.columns.map(col => <th key={col}>{col}</th>)}</tr></thead>
-                                        <tbody>{table.data.map((row, i) => (<tr key={i}>{table.columns.map(col => <td key={col}>{row[col]}</td>)}</tr>))}</tbody>
-                                    </table>
+                                    <div className="table-scroll-container">
+                                        <table className="question-table">
+                                            <thead><tr>{table.columns.map(col => <th key={col}>{col}</th>)}</tr></thead>
+                                            <tbody>{table.data.map((row, i) => (<tr key={i}>{table.columns.map(col => <td key={col}>{row[col]}</td>)}</tr>))}</tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             ))}
                         </div>
